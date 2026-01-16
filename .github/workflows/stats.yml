@@ -20,7 +20,7 @@ jobs:
 
       - name: Generate language stats images
         env:
-          USERNAME: ${{ github.repository_owner }}
+          USERNAME: "benkake"
           STATS_TOKEN: ${{ secrets.STATS_TOKEN }}
           THEME: github
         run: |
