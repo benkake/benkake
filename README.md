@@ -13,6 +13,6 @@ They **do not fully reflect my current professional standards**, especially rega
 - best practices and maintainability
 My completed and professional **projects are private due to confidentiality**.
 ## 📊 My Programming Languages Statistics
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=benkake&layout=compact&theme=github)
-## Top languages (public + private)
-![Top Languages (private)](.github/top-langs-private.svg)
+## 📊 GitHub Metrics
+![Metrics](.github/metrics.svg)
+
