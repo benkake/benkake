@@ -1,1 +1,40 @@
+name: Generate GitHub Metrics
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # Exécution chaque nuit à minuit UTC
+  workflow_dispatch:       # Exécution manuelle
+
+permissions:
+  contents: write          # Autorise le workflow à pousser des fichiers
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub Metrics
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          filename: .github/metrics.svg
+          base: header, languages
+          config_timezone: Europe/Brussels
+          plugin_languages: yes
+          plugin_languages_ignored: html, css
+          plugin_languages_details: bytes-size, percentage
+          plugin_languages_limit: 8
+          plugin_languages_indepth: yes
+          plugin_languages_sections: most-used
+          plugin_languages_analysis_timeout: 30
+
+      - name: Commit and push metrics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/metrics.svg || true
+          git commit -m "Update GitHub Metrics" || true
+          git push
 
