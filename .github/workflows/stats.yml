@@ -2,12 +2,11 @@ name: Generate language statistics
 
 on:
   schedule:
-    # Runs nightly at midnight (UTC)
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allow manual runs
+  workflow_dispatch:
 
 permissions:
-  contents: write  # allow the workflow to push commits
+  contents: write
 
 jobs:
   update-stats:
@@ -28,7 +27,7 @@ jobs:
           echo "Downloading public stats..."
           curl -f -sSL "https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}" \
             -o .github/top-langs-public.svg || echo "Public stats failed"
-        
+
           if [ -n "${STATS_TOKEN:-}" ]; then
             echo "Downloading private stats..."
             curl -f -sSL \
@@ -36,3 +35,11 @@ jobs:
               "https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}&count_private=true" \
               -o .github/top-langs-private.svg || echo "Private stats failed"
           fi
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/top-langs-public.svg .github/top-langs-private.svg || true
+          git commit -m "Update language stats" || true
+          git push
