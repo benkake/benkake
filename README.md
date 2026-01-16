@@ -13,6 +13,6 @@ They **do not fully reflect my current professional standards**, especially rega
 - best practices and maintainability
 My completed and professional **projects are private due to confidentiality**.
 
-## 📊 My GitHub Metrics
+## 📊 GitHub Metrics
 ![Metrics](.github/metrics.svg)
 
