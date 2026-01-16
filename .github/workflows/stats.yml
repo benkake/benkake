@@ -1,20 +1,49 @@
-name: Génération des statistiques de langages
+name: Generate language statistics
 
 on:
   schedule:
-    # S'exécute toutes les nuits à minuit
+    # Runs nightly at midnight (UTC)
     - cron: '0 0 * * *'
-  workflow_dispatch: # Permet de lancer manuellement le script
+  workflow_dispatch: # Allow manual runs
+
+permissions:
+  contents: write  # allow the workflow to push commits
 
 jobs:
   update-stats:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout du dépôt
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Générer les statistiques
-        uses: anuraghazra/github-readme-stats@master # Ou une action similaire comme 'lowlighter/metrics'
         with:
-          token: ${{ secrets.STATS_TOKEN }}
-          # L'action va scanner vos dépôts privés grâce au secret
+          persist-credentials: true
+
+      - name: Generate language stats images
+        env:
+          USERNAME: ${{ github.repository_owner }}
+          STATS_TOKEN: ${{ secrets.STATS_TOKEN }}
+          THEME: github
+        run: |
+          set -euo pipefail
+          mkdir -p .github
+
+          PUBLIC_URL="https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}"
+          PRIVATE_URL="https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}&count_private=true"
+
+          echo "Downloading public language stats..."
+          curl -fsSL "${PUBLIC_URL}" -o .github/top-langs-public.svg
+
+          if [ -n "${STATS_TOKEN:-}" ]; then
+            echo "Downloading private language stats (using STATS_TOKEN)..."
+            # Use an Authorization header to avoid leaking the token into files or logs
+            if ! curl -fsSL -H "Authorization: token ${STATS_TOKEN}" "${PRIVATE_URL}" -o .github/top-langs-private.svg; then
+              echo "Warning: failed to download private stats. Check STATS_TOKEN and service compatibility." >&2
+              rm -f .github/top-langs-private.svg || true
+            fi
+          else
+            echo "STATS_TOKEN not set; skipping private stats image."
+            rm -f .github/top-langs-private.svg || true
+          fi
+
+
+
