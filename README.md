@@ -13,3 +13,6 @@ They **do not fully reflect my current professional standards**, especially rega
 - best practices and maintainability
 My completed and professional projects are private due to confidentiality.
 ## 📊 These are my Programming Languages Statistics
+![Statistiques de langages](.github/top-langs-public.svg)
+![Statistiques privées](.github/top-langs-private.svg)
+
