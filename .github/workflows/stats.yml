@@ -24,12 +24,15 @@ jobs:
           STATS_TOKEN: ${{ secrets.STATS_TOKEN }}
           THEME: github
         run: |
-          mkdir -p .github
-          echo "Downloading public stats..."
-          # Utilisation de -f pour identifier l'erreur et -s pour le silence
-          curl -f -sSL "https://github-readme-stats.vercel.app" -o .github/top-langs-public.svg || echo "Public stats failed"
+  mkdir -p .github
+  echo "Downloading public stats..."
+  curl -f -sSL "https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}" \
+    -o .github/top-langs-public.svg || echo "Public stats failed"
 
-          if [ -n "${STATS_TOKEN:-}" ]; then
-            echo "Downloading private stats..."
-            curl -f -sSL -H "Authorization: token ${STATS_TOKEN}" "https://github-readme-stats.vercel.app&count_private=true" -o .github/top-langs-private.svg || echo "Private stats failed"
-          fi
+  if [ -n "${STATS_TOKEN:-}" ]; then
+    echo "Downloading private stats..."
+    curl -f -sSL \
+      -H "Authorization: token ${STATS_TOKEN}" \
+      "https://github-readme-stats.vercel.app/api/top-langs/?username=${USERNAME}&layout=compact&theme=${THEME}&count_private=true" \
+      -o .github/top-langs-private.svg || echo "Private stats failed"
+  fi
